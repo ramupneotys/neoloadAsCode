@@ -1,0 +1,60 @@
+name: rampupNeotys
+user_paths:
+- name: MyUserPath
+  actions:
+    steps:
+    - transaction:
+        name: MyTransaction
+        steps:
+        - request:
+            url: https://petstore.swagger.io/v2/pet/3543991167
+            method: DELETE
+        - request:
+            url: https://preprod-neoload.saas.neotys.com/trend
+        - delay: 2s
+populations:
+- name: MyPopulation
+  user_paths:
+  - name: MyUserPath
+    distribution: 50%
+- name: MyPopulation2
+  user_paths:
+  - name: MyUserPath
+    distribution: 50%
+scenarios:
+- name: S1
+  populations:
+  - name: MyPopulation
+    constant_load:
+      users: 5
+      duration: 30m
+  - name: MyPopulation2
+    rampup_load:
+      min_users: 1
+      max_users: 40
+      increment_users: 1
+      increment_every: 10s
+      duration: 20m
+- name: S2
+  populations:
+  - name: MyPopulation
+    constant_load:
+      users: 5
+  - name: MyPopulation2
+    rampup_load:
+      min_users: 1
+      increment_users: 2
+      increment_every: 10m
+      duration: 2h
+- name: S3
+  populations:
+  - name: MyPopulation
+    constant_load:
+      users: 5
+      duration: 30 iterations
+- name: S4
+  populations:
+  - name: MyPopulation2
+    constant_load:
+      users: 5
+      duration: 30
